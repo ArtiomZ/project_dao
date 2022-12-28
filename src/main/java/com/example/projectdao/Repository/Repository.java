@@ -1,13 +1,17 @@
-package com.example.projectdao;
+package com.example.projectdao.Repository;
 
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Repository
@@ -20,16 +24,18 @@ public class Repository {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
-    public String getProductName(String name) {
-        StringBuilder sB = new StringBuilder();
+    public List<Object> getProductName(String name) {
+        Map<String, String> map = new HashMap<>();
+        MapSqlParameterSource query = new MapSqlParameterSource();
+        return convert(namedParameterJdbcTemplate.queryForList(request, query.addValue("name", name)));
+    }
 
-        var result = namedParameterJdbcTemplate.queryForRowSet(request
-                + "'" + name + "'", new HashMap<>());
-
-        while (result.next()) {
-            sB.append(result.getString("product_name") + "\n");
+    private static List<Object> convert(List<Map<String, Object>> list) {
+        List<Object> result = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            result.add(list.get(i).get("product_name"));
         }
-        return sB.toString();
+        return result;
     }
 
     private static String read(String scriptFileName) {
