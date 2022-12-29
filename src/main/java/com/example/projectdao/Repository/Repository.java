@@ -24,18 +24,10 @@ public class Repository {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
-    public List<Object> getProductName(String name) {
+    public List<String> getProductName(String name) {
         Map<String, String> map = new HashMap<>();
         MapSqlParameterSource query = new MapSqlParameterSource();
-        return convert(namedParameterJdbcTemplate.queryForList(request, query.addValue("name", name)));
-    }
-
-    private static List<Object> convert(List<Map<String, Object>> list) {
-        List<Object> result = new ArrayList<>();
-        for (int i = 0; i < list.size(); i++) {
-            result.add(list.get(i).get("product_name"));
-        }
-        return result;
+        return namedParameterJdbcTemplate.queryForList(request, query.addValue("name", name), String.class);
     }
 
     private static String read(String scriptFileName) {

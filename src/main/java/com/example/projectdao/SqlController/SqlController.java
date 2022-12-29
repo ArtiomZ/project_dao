@@ -15,7 +15,7 @@ public class SqlController {
     }
 
     @GetMapping
-    public List<Object> getProduct(@RequestParam String name) {
+    public List<String> getProduct(@RequestParam String name) {
         return repository.getProductName(name);
     }
 }
